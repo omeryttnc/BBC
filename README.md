@@ -18,7 +18,7 @@ This project is a solution for an API task provided by BBC. It involves implemen
 ### 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/omeryttnc/BBC_DELETE_IKI
+   git clone https://github.com/omeryttnc/BBC
    ```
 
 ### 2. **Ensure you have Java 21 installed.**
