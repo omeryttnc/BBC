@@ -111,7 +111,7 @@ jobs:
 
       # Run Allure Report
       - name: Run Allure Report
-        working-directory: /home/runner/work/BBC_DELETE_IKI/BBC_DELETE_IKI
+        working-directory: /home/runner/work/BBC/BBC
         run: |
           allure generate target/allure-results -o allure-report
 
