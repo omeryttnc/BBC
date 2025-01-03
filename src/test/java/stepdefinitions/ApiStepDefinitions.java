@@ -9,20 +9,28 @@ import org.BBC.constants.ApiEndpoints;
 import org.BBC.models.Schedule;
 import org.BBC.services.ScheduleService;
 import org.BBC.utils.RestClient;
+import org.BBC.utils.ScenarioContext;
 import org.junit.Assert;
 import validators.TestDataValidator;
 import validators.ApiResponseValidator;
 
 public class ApiStepDefinitions {
-    private Response response;
-    Schedule scheduleService;
+   private Schedule scheduleService;
     private final String EPISODE = "episode";
+    private final ScenarioContext scenarioContext;
+    private final RestClient restClient;
+
+    public ApiStepDefinitions(ScenarioContext scenarioContext,RestClient restClient) {
+        this.scenarioContext = scenarioContext;
+        this.restClient = restClient;
+    }
 
     @Given("I make a GET request to the schedule endpoint")
     @Step("Making a GET request to the schedule endpoint")
     @Description("This step makes a GET request to fetch the schedule from the API endpoint.")
     public void i_make_a_get_request_to_the_schedule_endpoint() {
-        response = RestClient.get(ApiEndpoints.SCHEDULE);
+        Response response = restClient.getRequest(ApiEndpoints.SCHEDULE);
+        scenarioContext.setResponse(response);
         scheduleService = new ScheduleService().getSchedule();
     }
 
@@ -30,14 +38,14 @@ public class ApiStepDefinitions {
     @Step("Verifying the status code of the response")
     @Description("Verify that the status code of the API response is as expected.")
     public void the_response_status_code_should_be(int statusCode) {
-        ApiResponseValidator.validateStatusCode(response, statusCode);
+        ApiResponseValidator.validateStatusCode(scenarioContext.getResponse(), statusCode);
     }
 
     @Then("Verify that the response time should not exceed {int} milliseconds")
     @Step("Verifying the response time")
     @Description("Verifying that the response time of the API is within the expected limit.")
     public void the_response_time_should_be_less_than(int maxTime) {
-        ApiResponseValidator.validateResponseTime(response, maxTime);
+        ApiResponseValidator.validateResponseTime(scenarioContext.getResponse(), maxTime);
     }
 
     @Then("Verify if the id field is never null or empty for all items present in the data array")
@@ -118,20 +126,21 @@ public class ApiStepDefinitions {
     @Step("Verifying the response header value")
     @Description("Verify the existence of the specified header value in the response headers.")
     public void response_headers_verify_the_value(String header) {
-        ApiResponseValidator.checkHeaderExist(response, header);
+        ApiResponseValidator.checkHeaderExist(scenarioContext.getResponse(), header);
     }
 
     @Given("I send a GET request to the schedule endpoint {string}")
     @Step("Sending a GET request to the schedule endpoint with the specified string")
     @Description("Sending a GET request to the schedule endpoint with a dynamic string appended.")
     public void GET_request_to_the_schedule_endpoint(String endpoint) {
-        response = RestClient.get(ApiEndpoints.SCHEDULE + endpoint);
+        Response response = restClient.getRequest(ApiEndpoints.SCHEDULE + endpoint);
+        scenarioContext.setResponse(response);
     }
 
     @And("Verify the error object should contain the property {string}")
     @Step("Verifying that the error object contains the specified property")
     @Description("Verify that the error object in the response contains the specified property.")
     public void the_error_object_had_the_properties(String property) {
-        TestDataValidator.assertIfIsNotNullOrEmpty(response.jsonPath().getString("error." + property));
+        TestDataValidator.assertIfIsNotNullOrEmpty(scenarioContext.getResponse().jsonPath().getString("error." + property));
     }
 }
