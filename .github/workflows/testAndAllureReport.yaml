@@ -11,7 +11,7 @@ jobs:
     continue-on-error: true
 
     steps:
-      - # Checkout the repository
+      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
