@@ -1,0 +1,8 @@
+{
+  "version": "mock data not found",
+  "schema": "/v1/schema.json",
+  "error": {
+    "details": "Schedule not found for date (2023-09-11)",
+    "http_response_code": 404
+  }
+}

@@ -1,4 +1,4 @@
-package org.BBC.models;
+package org.BBC.models.schedulePositive;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

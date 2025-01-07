@@ -1,6 +1,15 @@
 
 # BBC API Task
 
+## Codes and Tests Prepared by
+Omer Ali IYITUTUNCU
+
+QA Test Automation Engineer
+
+[omeryttnc@gmail.com]()
+
+https://www.linkedin.com/in/omer-ali-iyitutuncu/
+
 ## Project Overview
 
 This project is a solution for an API task provided by BBC. It involves implementing automated tests for an API using Java 21, Cucumber, and JUnit. The project includes test reports generated with Allure and Cucumber HTML, as well as a manual functional testing component.
@@ -143,3 +152,15 @@ The manual functional testing part of the task has been added to the `src/test/r
 
 - Clarify which "id" field(s) need to be validated (e.g., episode id, version id, etc.).
 - Ensure the API response returns the expected number of items (i.e., 4 items in the elements array).
+
+## Javadoc Documentation
+The project is well-documented using Javadoc to provide detailed descriptions of the methods and classes in the codebase. To generate the Javadoc documentation for this project, follow these steps:
+
+Ensure JDK is installed: Javadoc requires the JDK (Java Development Kit) to be installed on your system.
+
+Generate Javadoc: Navigate to the root directory of the project and run the following Maven command to generate the Javadoc:
+
+   ```bash
+mvn javadoc:javadoc
+```
+Access the Javadoc: After the command completes, the generated Javadoc files will be available in the target/reports/apidocs directory. Open the index.html file in any browser to view the generated documentation.

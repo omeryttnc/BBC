@@ -1,15 +1,21 @@
-package org.BBC.models;
+package org.BBC.models.scheduleNotFound;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Data
-public class Channel {
+public class NotFoundSchedule {
 
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("version")
+    private String version;
+
+    @JsonProperty("schema")
+    private String schema;
+
+    @JsonProperty("error")
+    private ErrorDetails error;
 }

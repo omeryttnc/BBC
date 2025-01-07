@@ -1,37 +1,32 @@
 package stepdefinitions;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import io.qameta.allure.*;
-import io.restassured.response.Response;
-import org.BBC.constants.ApiEndpoints;
-import org.BBC.models.Schedule;
-import org.BBC.services.ScheduleService;
-import org.BBC.utils.RestClient;
-import org.BBC.utils.ScenarioContext;
+import io.qameta.allure.Description;
+import io.qameta.allure.Step;
+import org.BBC.models.schedulePositive.Schedule;
 import org.junit.Assert;
-import validators.TestDataValidator;
+import services.ScheduleService;
+import utils.ScenarioContext;
 import validators.ApiResponseValidator;
+import validators.TestDataValidator;
 
 public class ApiStepDefinitions {
-   private Schedule scheduleService;
+    private Schedule scheduleService;
     private final String EPISODE = "episode";
     private final ScenarioContext scenarioContext;
-    private final RestClient restClient;
 
-    public ApiStepDefinitions(ScenarioContext scenarioContext,RestClient restClient) {
+    public ApiStepDefinitions(ScenarioContext scenarioContext) {
         this.scenarioContext = scenarioContext;
-        this.restClient = restClient;
     }
 
     @Given("I make a GET request to the schedule endpoint")
     @Step("Making a GET request to the schedule endpoint")
     @Description("This step makes a GET request to fetch the schedule from the API endpoint.")
     public void i_make_a_get_request_to_the_schedule_endpoint() {
-        Response response = restClient.getRequest(ApiEndpoints.SCHEDULE);
-        scenarioContext.setResponse(response);
-        scheduleService = new ScheduleService().getSchedule();
+        scheduleService = new ScheduleService(scenarioContext).getSchedule();
     }
 
     @Then("Verify that the API should return a {int} status code")
@@ -118,7 +113,7 @@ public class ApiStepDefinitions {
     public void the_transmission_start_date_value_is_before_the_transmission_end_date() {
         scheduleService.getElements()
                 .forEach(
-                        t -> TestDataValidator.isStartDateBeforeEndDate(t.getTransmission_start(), t.getTransmission_end())
+                        t -> TestDataValidator.assertIfStartDateBeforeEndDate(t.getTransmission_start(), t.getTransmission_end())
                 );
     }
 
@@ -126,21 +121,28 @@ public class ApiStepDefinitions {
     @Step("Verifying the response header value")
     @Description("Verify the existence of the specified header value in the response headers.")
     public void response_headers_verify_the_value(String header) {
-        ApiResponseValidator.checkHeaderExist(scenarioContext.getResponse(), header);
+        ApiResponseValidator.validateHeaderExist(scenarioContext.getResponse(), header);
     }
 
-    @Given("I send a GET request to the schedule endpoint {string}")
+    @Given("I send a GET request to the schedule endpoint with date")
     @Step("Sending a GET request to the schedule endpoint with the specified string")
     @Description("Sending a GET request to the schedule endpoint with a dynamic string appended.")
-    public void GET_request_to_the_schedule_endpoint(String endpoint) {
-        Response response = restClient.getRequest(ApiEndpoints.SCHEDULE + endpoint);
-        scenarioContext.setResponse(response);
+    public void GET_request_to_the_schedule_endpoint() {
+        new ScheduleService(scenarioContext).getNotFoundSchedule();
     }
 
-    @And("Verify the error object should contain the property {string}")
+    @And("Verify the error object should contain the property")
     @Step("Verifying that the error object contains the specified property")
     @Description("Verify that the error object in the response contains the specified property.")
-    public void the_error_object_had_the_properties(String property) {
-        TestDataValidator.assertIfIsNotNullOrEmpty(scenarioContext.getResponse().jsonPath().getString("error." + property));
+    public void the_error_object_had_the_properties(DataTable property) {
+        property.column(0).forEach(
+                t -> TestDataValidator.assertIfIsNotNullOrEmpty(
+                        scenarioContext
+                                .getResponse()
+                                .jsonPath()
+                                .getString("error." + t
+                                )
+                )
+        );
     }
 }

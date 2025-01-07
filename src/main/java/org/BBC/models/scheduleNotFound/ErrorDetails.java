@@ -1,15 +1,18 @@
-package org.BBC.models;
+package org.BBC.models.scheduleNotFound;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Data
-public class Versions {
+public class ErrorDetails {
 
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("details")
+    private String details;
+
+    @JsonProperty("http_response_code")
+    private int http_response_code;
 }
