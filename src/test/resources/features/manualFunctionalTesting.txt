@@ -1,0 +1,17 @@
+Feature: Validate download option
+  Scenario: Verify that the episode can be downloaded
+    Given I am viewing the episode details for "Breakfast"
+    When I check the download availability
+    Then I should see that the episode is available for download
+
+Feature: Check for content guidance
+  Scenario: Verify that the episode does not require guidance
+    Given I am viewing the episode details for "Breakfast"
+    When I check the guidance requirement
+    Then I should see that no guidance is required
+
+Feature: Verify expiry information
+  Scenario: Check that the episode expiry details are correct
+    Given I am viewing the episode availability for "Breakfast"
+    When I check the expiry date and time
+    Then I should see that the episode has expires date

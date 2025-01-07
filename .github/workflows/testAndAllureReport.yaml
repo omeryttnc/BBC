@@ -1,0 +1,116 @@
+name: Deploy Allure Report to web-pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  cucumber-tests:
+    runs-on: ubuntu-22.04
+    continue-on-error: true
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Git configuration
+      - name: Set up Git configuration
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      # Switch to web-pages branch or create it, and clean it
+      - name: Prepare web-pages branch
+        run: |
+          git fetch origin
+          if git show-ref --quiet refs/heads/web-pages; then
+            echo "web-pages branch exists. Checking out and cleaning."
+            git checkout web-pages
+            git rm -rf . || true
+          else
+            echo "web-pages branch does not exist. Creating a new one."
+            git checkout --orphan web-pages
+          fi
+          git clean -fdx
+          git commit --allow-empty -m "Initialize web-pages branch"
+          git push origin web-pages --force
+          git checkout master
+
+      # Set up JDK 21
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # Install Maven
+      - name: Install Maven
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y maven
+
+      # Run tests
+      - name: Run Cucumber tests
+        run: |
+          mvn clean test || true
+
+      # Debug to check if allure-results exists
+      - name: Check allure-results directory
+        run: |
+          if [ -d "target/allure-results" ]; then
+            echo "Allure results found."
+          else
+            echo "Allure results not found!"
+            exit 1
+          fi
+
+      # Copy allure-results to a temporary location
+      - name: Copy allure-results
+        run: |
+          mkdir -p temp/allure-results
+          cp -r target/allure-results/* temp/allure-results/
+
+      # Publish Allure report
+      - name: Publish Allure report to GitHub Pages
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          
+          git fetch origin 
+
+          git add temp/*
+          git commit -m "Deploy Allure report"
+          git push origin web-pages     
+          git checkout web-pages
+
+      # Install Allure
+      - name: Install Allure
+        run: |
+          curl -o allure-2.24.0.zip -L https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.zip
+          unzip allure-2.24.0.zip -d /opt
+          ln -s /opt/allure-2.24.0/bin/allure /usr/local/bin/allure
+
+      # Debug to check if allure-results exists
+      - name: Check allure-results directory
+        run: |
+          if [ -d "target/allure-results" ]; then
+            echo "Allure results found."
+          else
+            echo "Allure results not found!"
+            exit 1
+          fi
+
+      # Run Allure Report
+      - name: Run Allure Report
+        working-directory: /home/runner/work/BBC/BBC
+        run: |
+          allure generate target/allure-results -o allure-report
+
+      # Commit and push changes to web-pages branch
+      - name: Commit and push to web-pages
+        run: |
+          git add allure-report 
+          git commit -m "Deploy Allure report"
+          git push -u origin web-pages --force
