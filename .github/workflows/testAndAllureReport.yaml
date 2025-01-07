@@ -11,10 +11,7 @@ jobs:
     continue-on-error: true
 
     steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
-
+      # Set up Git configuration
       - name: Set up Git configuration
         run: |
           git config user.name "github-actions"
