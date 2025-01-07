@@ -1,0 +1,1 @@
+{"total":2,"items":[{"uid":"da97ff8a91afdc0bc82349d4332833c9","name":"API Schedule Validation","statistic":{"failed":0,"broken":0,"skipped":0,"passed":12,"unknown":0,"total":12}},{"uid":"4a0b8f14de71a8415bd2ba2359f67e1c","name":"Error Handling in Schedule API","statistic":{"failed":0,"broken":0,"skipped":0,"passed":2,"unknown":0,"total":2}}]}
